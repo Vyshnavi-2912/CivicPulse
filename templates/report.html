@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Report a Problem - CivicPulse{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <div style="max-width: 840px; margin: 0 auto;">
+        <div style="margin-bottom: 2rem; text-align: center;">
+            <span class="section-tag">Civic Reporting Form</span>
+            <h1 style="font-size: 2.2rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Report an Invisible Problem</h1>
+            <p style="color: var(--gray-muted);">Fill in the details below to log a problem in your village, town, or city. Simple and accessible for all citizens.</p>
+        </div>
+
+        <form action="{{ url_for('report') }}" method="POST" enctype="multipart/form-data" class="form-card" id="civicReportForm">
+            
+            <!-- 1. IMAGE UPLOAD & PREVIEW -->
+            <div style="margin-bottom: 2rem;">
+                <label class="form-label">
+                    <i class="fa-solid fa-camera" style="color: var(--teal-primary);"></i> Upload Problem Photograph <span class="required">*</span>
+                </label>
+                
+                <div class="file-upload-box" id="uploadDropzone">
+                    <div class="upload-icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div style="font-weight: 700; color: var(--navy-dark); margin-bottom: 0.25rem;">
+                        Click to upload or drag & drop image here
+                    </div>
+                    <div style="font-size: 0.85rem; color: #64748B;">
+                        Supports JPG, PNG, WEBP or GIF (Max file size: 10MB)
+                    </div>
+                    <input type="file" name="image" id="imageInput" accept="image/*" required style="display: none;">
+                </div>
+
+                <!-- PREVIEW CONTAINER -->
+                <div class="image-preview-container" id="imagePreviewContainer">
+                    <img id="imagePreviewImg" src="" alt="Problem Preview" class="image-preview-img">
+                    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--gray-muted);">
+                        Image preview loaded successfully
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. AI-ASSISTED PROBLEM DETECTION (DEMO MODE) -->
+            <div class="ai-box" id="aiAnalysisContainer" style="display: none;">
+                <div class="ai-header">
+                    <span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Detection Demo</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--teal-hover);" id="aiConfidenceText">--</span>
+                </div>
+                <div style="font-size: 0.95rem; color: var(--navy-dark); font-weight: 600; margin-bottom: 0.4rem;">
+                    Suggested Category: <span id="aiCategoryText" style="color: var(--teal-primary);">Analyzing image...</span>
+                </div>
+                <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #D97706;"></i>
+                    Automated AI recognition is running in <strong>Demonstration Mode</strong> and may be inaccurate. Please verify or manually select the category below.
+                </p>
+                <button type="button" class="btn btn-outline" id="btnAcceptAi" style="font-size: 0.85rem; padding: 0.35rem 0.85rem; background: #FFFFFF; display: none;">
+                    <i class="fa-solid fa-check"></i> Accept AI Recommendation
+                </button>
+            </div>
+
+            <!-- 3. PROBLEM CATEGORY & SEVERITY PARAMETERS -->
+            <div style="border-top: 1px solid var(--gray-border); padding-top: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 1.15rem; color: var(--navy-dark); margin-bottom: 1rem;">Problem Classification</h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="categorySelect">Problem Category <span class="required">*</span></label>
+                        <select name="category" id="categorySelect" class="form-select" required>
+                            <option value="Pothole">Pothole</option>
+                            <option value="Damaged Road">Damaged Road</option>
+                            <option value="Broken Streetlight">Broken Streetlight</option>
+                            <option value="Garbage Accumulation">Garbage Accumulation</option>
+                            <option value="Water Leakage">Water Leakage</option>
+                            <option value="Fallen Tree">Fallen Tree</option>
+                            <option value="Unsafe Electrical Pole or Wire">Unsafe Electrical Pole or Wire</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="observation_date">Date of Observation <span class="required">*</span></label>
+                        <input type="date" name="observation_date" id="observation_date" class="form-control" value="{{ today_date }}" required>
+                    </div>
+                </div>
+
+                <!-- RULE-BASED SEVERITY CALCULATOR PREVIEW BOX -->
+                <div style="background-color: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); margin-top: 0.5rem; border: 1px solid var(--gray-border);">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--navy-dark); margin-bottom: 0.75rem;">
+                        <i class="fa-solid fa-calculator" style="color: var(--teal-primary);"></i> Preliminary Severity Assessment Engine
+                    </div>
+
+                    <div class="form-grid" style="margin-bottom: 0.75rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;" for="safetyRiskSelect">Safety Risk Factor</label>
+                            <select name="safety_risk" id="safetyRiskSelect" class="form-select" style="font-size: 0.85rem;">
+                                <option value="none">Low / No Immediate Hazard</option>
+                                <option value="moderate_hazard">Moderate Hazard (Vehicle Damage Risk)</option>
+                                <option value="high_hazard">High Hazard (Live Wire / Severe Obstruction)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;" for="extentDamageSelect">Extent of Visible Damage</label>
+                            <select name="extent_damage" id="extentDamageSelect" class="form-select" style="font-size: 0.85rem;">
+                                <option value="minor">Minor Wear / Small Dump</option>
+                                <option value="moderate" selected>Moderate Damage</option>
+                                <option value="severe">Severe Infrastructure Breakdown</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label" style="font-size: 0.8rem;" for="locationTypeSelect">Location Context</label>
+                            <select name="location_type" id="locationTypeSelect" class="form-select" style="font-size: 0.85rem;">
+                                <option value="standard">Standard Residential / Rural Lane</option>
+                                <option value="main_road">High Traffic Main Access Road</option>
+                                <option value="public_facility">Near School / Hospital / Bazaar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem; background-color: #FFFFFF; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--gray-border);">
+                        <div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--gray-muted); display: block;">CALCULATED SEVERITY:</span>
+                            <span id="severityBadge" class="badge badge-severity-medium">MEDIUM</span>
+                        </div>
+                        <div style="font-size: 0.82rem; color: var(--navy-mid); line-height: 1.4;" id="severityReasonText">
+                            Assigned MEDIUM severity based on standard rule criteria.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. LOCATION DETAILS -->
+            <div style="border-top: 1px solid var(--gray-border); padding-top: 1.5rem; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <h3 style="font-size: 1.15rem; color: var(--navy-dark);">Location Details</h3>
+                    <button type="button" class="btn btn-outline" id="btnDetectGps" style="font-size: 0.85rem; padding: 0.4rem 0.9rem; color: var(--teal-primary); border-color: var(--teal-primary);">
+                        <i class="fa-solid fa-location-crosshairs"></i> Detect My Current GPS Location
+                    </button>
+                </div>
+                
+                <div id="gpsStatusText" style="font-size: 0.82rem; color: var(--teal-hover); margin-bottom: 1rem; display: none;"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="state">State <span class="required">*</span></label>
+                        <input type="text" name="state" id="state" class="form-control" placeholder="e.g. Andhra Pradesh, Uttar Pradesh" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="district">District <span class="required">*</span></label>
+                        <input type="text" name="district" id="district" class="form-control" placeholder="e.g. West Godavari, Eluru" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="village_city">Village or City <span class="required">*</span></label>
+                        <input type="text" name="village_city" id="village_city" class="form-control" placeholder="e.g. Kovvur, Eluru" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mandal_municipality">Mandal / Municipality / Block</label>
+                        <input type="text" name="mandal_municipality" id="mandal_municipality" class="form-control" placeholder="e.g. Kovvur Mandal, Kothapeta">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" for="landmark">Landmark / Specific Location Details</label>
+                        <input type="text" name="landmark" id="landmark" class="form-control" placeholder="e.g. Near Canal Bridge, Mandoorivari Street">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="latitude">Latitude (Auto-filled or GPS)</label>
+                        <input type="number" step="any" name="latitude" id="latitude" class="form-control" placeholder="e.g. 16.7107">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="longitude">Longitude (Auto-filled or GPS)</label>
+                        <input type="number" step="any" name="longitude" id="longitude" class="form-control" placeholder="e.g. 81.0952">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. PROBLEM DESCRIPTION -->
+            <div style="border-top: 1px solid var(--gray-border); padding-top: 1.5rem; margin-bottom: 2rem;">
+                <div class="form-group full-width">
+                    <label class="form-label" for="description">Detailed Description of the Problem <span class="required">*</span></label>
+                    <textarea name="description" id="description" class="form-control" rows="4" placeholder="Describe what you observed, how long it has been present, and any potential hazard to people or vehicles..." required></textarea>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div style="text-align: right;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1.05rem;" id="submitReportBtn">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Problem Report
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/ai_demo.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Details - {{ report.id }} - CivicPulse{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- BREADCRUMB & BACK NAV -->
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{{ url_for('reports') }}" style="font-size: 0.9rem; font-weight: 600; color: var(--gray-muted);">
+            <i class="fa-solid fa-arrow-left"></i> Back to Explore Reports
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: start;">
+        
+        <!-- LEFT COLUMN: IMAGE & REPORT DATA -->
+        <div>
+            <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 2rem;">
+                
+                <!-- FULL IMAGE -->
+                <div style="width: 100%; max-height: 420px; background-color: var(--navy-dark); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="{{ url_for('static', filename='uploads/' + report.image_path) }}" alt="{{ report.category }}" style="width: 100%; height: 100%; object-fit: contain; max-height: 420px;" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'600\' height=\'400\' viewBox=\'0 0 600 400\'><rect width=\'600\' height=\'400\' fill=\'%230F172A\'/><text x=\'50%\' y=\'50%\' fill=\'%2394A3B8\' font-family=\'sans-serif\' font-size=\'18\' text-anchor=\'middle\' dominant-baseline=\'middle\'>CivicPulse Report Photograph</text></svg>';">
+                </div>
+
+                <div style="padding: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--gray-muted); letter-spacing: 0.05em;">REPORT ID: {{ report.id }}</span>
+                        
+                        <div style="display: flex; gap: 6px;">
+                            <span class="badge badge-severity-{{ report.severity_level | lower }}">
+                                SEVERITY: {{ report.severity_level }}
+                            </span>
+                            <span class="badge badge-status-{{ report.status | lower | replace(' ', '-') }}">
+                                STATUS: {{ report.status }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <h1 style="font-size: 2rem; color: var(--navy-dark); margin-bottom: 0.75rem;">{{ report.category }}</h1>
+                    
+                    <div style="font-size: 0.95rem; color: var(--navy-subtle); margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--teal-primary);"></i>
+                        <strong>Location:</strong> {{ report.village_city }}{% if report.mandal_municipality %}, {{ report.mandal_municipality }}{% endif %}, {{ report.district }}, {{ report.state }}
+                    </div>
+
+                    <p style="font-size: 1rem; color: var(--navy-mid); line-height: 1.6; margin-bottom: 1.5rem; background-color: var(--bg-main); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--teal-primary);">
+                        {{ report.description }}
+                    </p>
+
+                    <!-- METADATA GRID -->
+                    <div class="form-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem;">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--gray-muted); font-weight: 600; display: block;">DATE OBSERVED</span>
+                            <span style="font-weight: 600; color: var(--navy-dark);"><i class="fa-regular fa-calendar"></i> {{ report.observation_date }}</span>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--gray-muted); font-weight: 600; display: block;">DATE SUBMITTED</span>
+                            <span style="font-weight: 600; color: var(--navy-dark);"><i class="fa-regular fa-clock"></i> {{ report.submission_date }}</span>
+                        </div>
+                    </div>
+
+                    <!-- UPVOTE ACTION -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-border); padding-top: 1.25rem;">
+                        <button type="button" class="btn btn-outline btn-upvote" data-report-id="{{ report.id }}" style="font-size: 0.9rem;">
+                            <i class="fa-regular fa-thumbs-up"></i> Upvote Issue (<span class="upvote-count">{{ report.upvotes }}</span>)
+                        </button>
+
+                        {% if report.is_sample %}
+                            <span class="badge badge-sample">Hackathon Sample Report</span>
+                        {% else %}
+                            <span class="badge badge-real">Verified Citizen Log</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SEVERITY REASON ASSESSMENT BOX -->
+            <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-calculator" style="color: var(--orange-high);"></i> Preliminary Severity Assessment Rationale
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--navy-mid); line-height: 1.5; margin-bottom: 0.5rem;">
+                    {{ report.severity_reason }}
+                </p>
+                <div style="font-size: 0.78rem; color: var(--gray-muted);">
+                    <i class="fa-solid fa-info-circle"></i> Preliminary severity is calculated transparently using rule-based criteria and does not replace an official on-site technical inspection by municipal engineers.
+                </div>
+            </div>
+
+            <!-- AI CLASSIFICATION METADATA BOX -->
+            {% if report.ai_detected_category %}
+                <div style="background-color: #F0FDF4; border-radius: var(--radius-lg); border: 1px solid #A7F3D0; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                        <span class="ai-badge"><i class="fa-solid fa-robot"></i> AI Vision Analysis</span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #059669;">Confidence: {{ (report.ai_confidence * 100) | int }}%</span>
+                    </div>
+                    <div style="font-size: 0.88rem; color: var(--navy-dark);">
+                        Predicted Category: <strong>{{ report.ai_detected_category }}</strong>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #047857; margin-top: 0.4rem;">
+                        * Analyzed using CivicPulse Modular Classification Engine (Demonstration Mode).
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT COLUMN: STATUS TRACKER & LOCAL AUTHORITY CONTACT -->
+        <div>
+
+            <!-- STATUS TIMELINE TRACKER -->
+            <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 1.25rem;">
+                    <i class="fa-solid fa-bars-staggered" style="color: var(--teal-primary);"></i> Status Lifecycle Tracker
+                </h3>
+
+                <div style="display: flex; flex-direction: column; gap: 1.25rem; position: relative; padding-left: 1.5rem;">
+                    <div style="position: absolute; left: 7px; top: 10px; bottom: 10px; width: 2px; background-color: var(--gray-border);"></div>
+
+                    <!-- Step 1: Reported -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -1.5rem; top: 2px; width: 16px; height: 16px; border-radius: 50%; background-color: var(--teal-primary);"></div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--navy-dark);">1. Issue Logged</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-muted);">Submitted on {{ report.submission_date }}</div>
+                    </div>
+
+                    <!-- Step 2: Under Review -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -1.5rem; top: 2px; width: 16px; height: 16px; border-radius: 50%; background-color: {% if report.status in ['Under Review', 'In Progress', 'Resolved'] %}var(--teal-primary){% else %}var(--gray-light){% endif %};"></div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: {% if report.status in ['Under Review', 'In Progress', 'Resolved'] %}var(--navy-dark){% else %}var(--gray-muted){% endif %};">2. Under Department Review</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-muted);">Assigned preliminary severity for dispatch priority</div>
+                    </div>
+
+                    <!-- Step 3: In Progress -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -1.5rem; top: 2px; width: 16px; height: 16px; border-radius: 50%; background-color: {% if report.status in ['In Progress', 'Resolved'] %}var(--teal-primary){% else %}var(--gray-light){% endif %};"></div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: {% if report.status in ['In Progress', 'Resolved'] %}var(--navy-dark){% else %}var(--gray-muted){% endif %};">3. In Repair / Remediation</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-muted);">Work order issued to maintenance crew</div>
+                    </div>
+
+                    <!-- Step 4: Resolved -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; left: -1.5rem; top: 2px; width: 16px; height: 16px; border-radius: 50%; background-color: {% if report.status == 'Resolved' %}var(--green-sdg){% else %}var(--gray-light){% endif %};"></div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: {% if report.status == 'Resolved' %}var(--navy-dark){% else %}var(--gray-muted){% endif %};">4. Resolved & Inspected</div>
+                        <div style="font-size: 0.8rem; color: var(--gray-muted);">Problem cleared and verified</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOCAL AUTHORITY CONTACT CARD -->
+            <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; box-shadow: var(--shadow-md);">
+                <div style="margin-bottom: 1rem;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--teal-primary); text-transform: uppercase; letter-spacing: 0.05em;">LOCAL GOVERNANCE DIRECTORY</span>
+                    <h3 style="font-size: 1.25rem; color: var(--navy-dark); margin-top: 2px;">Responsible Public Authority</h3>
+                    <div style="font-size: 0.85rem; color: var(--gray-muted); margin-top: 2px;">
+                        Mapped Department: <strong style="color: var(--teal-primary);">{{ target_department }}</strong>
+                    </div>
+                </div>
+
+                {% if authority %}
+                    <div style="border: 1px solid #A7F3D0; background: #F0FDF4; border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+                            <span class="authority-verified-tag" style="font-size: 0.75rem; padding: 3px 8px; border-radius: 99px; background: #DCFCE7; color: #166534; font-weight: 700;">
+                                <i class="fa-solid fa-circle-check"></i> Verified Govt Office Record
+                            </span>
+                            <span style="font-size: 0.72rem; font-weight: 700; color: var(--navy-dark); background: #E2E8F0; padding: 2px 7px; border-radius: 4px;">
+                                {{ authority.district }} Division
+                            </span>
+                        </div>
+
+                        <div style="font-weight: 800; font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.75rem; line-height: 1.3;">
+                            {{ authority.office_name }}
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; background: #FFFFFF; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid #E2E8F0;">
+                            {% if authority.contact_person %}
+                                <div>
+                                    <span style="font-size: 0.72rem; color: var(--gray-muted); display: block; font-weight: 700; text-transform: uppercase;">Designated Officer</span>
+                                    <strong style="color: var(--navy-dark);"><i class="fa-solid fa-user-tie" style="color: var(--teal-primary); width: 18px;"></i> {{ authority.contact_person }}</strong>
+                                </div>
+                            {% endif %}
+
+                            {% if authority.phone %}
+                                <div>
+                                    <span style="font-size: 0.72rem; color: var(--gray-muted); display: block; font-weight: 700; text-transform: uppercase;">Direct Phone / Office Helpline</span>
+                                    <a href="tel:{{ authority.phone }}" style="font-weight: 800; color: var(--teal-primary); font-size: 1rem;">
+                                        <i class="fa-solid fa-phone" style="width: 18px;"></i> {{ authority.phone }}
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            {% if authority.email %}
+                                <div style="word-break: break-all;">
+                                    <span style="font-size: 0.72rem; color: var(--gray-muted); display: block; font-weight: 700; text-transform: uppercase;">Official Email Address</span>
+                                    <a href="mailto:{{ authority.email }}" style="color: var(--navy-mid); font-weight: 600;">
+                                        <i class="fa-solid fa-envelope" style="color: var(--teal-primary); width: 18px;"></i> {{ authority.email }}
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            {% if authority.address %}
+                                <div>
+                                    <span style="font-size: 0.72rem; color: var(--gray-muted); display: block; font-weight: 700; text-transform: uppercase;">Physical Office Location</span>
+                                    <span style="font-size: 0.84rem; color: var(--navy-mid); line-height: 1.4;">
+                                        <i class="fa-solid fa-building" style="color: var(--teal-primary); width: 18px;"></i> {{ authority.address }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                            {% if authority.phone %}
+                                <a href="tel:{{ authority.phone }}" class="btn btn-primary" style="flex: 1; font-size: 0.85rem; padding: 0.55rem 0.85rem;">
+                                    <i class="fa-solid fa-phone"></i> Call Office
+                                </a>
+                            {% endif %}
+
+                            {% if authority.email %}
+                                <a href="mailto:{{ authority.email }}" class="btn btn-outline" style="flex: 1; font-size: 0.85rem; padding: 0.55rem 0.85rem; background: #FFFFFF;">
+                                    <i class="fa-solid fa-envelope"></i> Email Department
+                                </a>
+                            {% endif %}
+
+                            {% if authority.address %}
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ authority.office_name }}+{{ authority.address }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.55rem 0.85rem; background: #0F172A; color: white;" title="Open Directions on Google Maps">
+                                    <i class="fa-solid fa-map-location-dot"></i> Maps
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div style="padding: 1.25rem; background-color: var(--bg-main); border-radius: var(--radius-md); border: 1px dashed var(--gray-border); text-align: center; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-building-circle-exclamation" style="font-size: 2rem; color: var(--gray-muted); margin-bottom: 0.5rem;"></i>
+                        <p style="font-size: 0.9rem; font-weight: 600; color: var(--navy-dark); margin-bottom: 0.25rem;">
+                            Contact information not yet verified for this area.
+                        </p>
+                        <a href="{{ url_for('authority') }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                            Browse Contact Directory
+                        </a>
+                    </div>
+                {% endif %}
+
+                <!-- QUICK 24x7 HELPLINE CHIPS -->
+                <div style="background-color: var(--bg-main); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--gray-border); margin-bottom: 1rem;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.4rem; text-transform: uppercase;">
+                        <i class="fa-solid fa-headset" style="color: var(--teal-primary);"></i> Rapid 24x7 Grievance Helplines:
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.78rem;">
+                        <span style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 4px; font-weight: 600;">⚡ Electricity: <strong>1912</strong></span>
+                        <span style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 4px; font-weight: 600;">🧹 Swachh Bharat: <strong>1969</strong></span>
+                        <span style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 4px; font-weight: 600;">🛣️ Highways: <strong>1033</strong></span>
+                        <span style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 3px 8px; border-radius: 4px; font-weight: 600;">🚨 Emergency: <strong>112</strong></span>
+                    </div>
+                </div>
+
+                <div style="font-size: 0.78rem; color: var(--gray-muted); line-height: 1.4; border-top: 1px solid var(--gray-border); padding-top: 0.75rem;">
+                    <i class="fa-solid fa-shield-halved"></i> <strong>Official e-Governance Notice:</strong> CivicPulse maintains verified authority contact information for citizen transparency and direct outreach.
+                </div>
+            </div>
+
+            <!-- GEOGRAPHIC PIN LOCATION MAP -->
+            {% if report.latitude and report.longitude %}
+                <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-top: 2rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.75rem;">
+                        <i class="fa-solid fa-map-location-dot" style="color: var(--teal-primary);"></i> Exact Pin Location Map
+                    </h3>
+                    <div id="detailMapContainer" style="width: 100%; height: 220px; border-radius: var(--radius-md); border: 1px solid var(--gray-border);"></div>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if report.latitude and report.longitude %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const lat = parseFloat("{{ report.latitude }}");
+    const lng = parseFloat("{{ report.longitude }}");
+    const detailMap = L.map('detailMapContainer').setView([lat, lng], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap | CivicPulse',
+        maxZoom: 19
+    }).addTo(detailMap);
+
+    const pinColor = "{% if report.severity_level == 'Critical' %}#DC2626{% elif report.severity_level == 'High' %}#EA580C{% elif report.severity_level == 'Medium' %}#D97706{% else %}#2563EB{% endif %}";
+
+    const customMarkerIcon = L.divIcon({
+        className: 'custom-leaflet-pin',
+        html: `<div style="background-color: ${pinColor}; width: 26px; height: 26px; border-radius: 50%; border: 3px solid #FFFFFF; box-shadow: 0 4px 10px rgba(0,0,0,0.4);"></div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13]
+    });
+
+    L.marker([lat, lng], { icon: customMarkerIcon }).addTo(detailMap)
+        .bindPopup("<div style='font-size:0.85rem; font-family:sans-serif;'><strong>{{ report.id }}</strong><br>{{ report.category }}<br>📍 {{ report.village_city }}</div>");
+    
+    setTimeout(() => { detailMap.invalidateSize(); }, 300);
+});
+</script>
+{% endif %}
+{% endblock %}

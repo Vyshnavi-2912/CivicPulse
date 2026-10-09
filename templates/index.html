@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}CivicPulse - Making Invisible Problems Visible (SDG 11){% endblock %}
+
+{% block content %}
+<div class="page-wrapper" style="padding-top: 1rem;">
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <div class="sdg-badge">
+                    <i class="fa-solid fa-seedling"></i> UN SDG 11: Sustainable Cities & Communities
+                </div>
+                <h1 class="hero-title">
+                    Making <span>Invisible Problems</span> Visible.
+                </h1>
+                <p class="hero-subtitle">
+                    Discover local problems. Highlight what matters. Help build safer, cleaner, and more resilient communities in villages and cities.
+                </p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('report') }}" class="btn btn-primary" id="heroReportBtn">
+                        <i class="fa-solid fa-camera"></i> Report a Problem
+                    </a>
+                    <a href="{{ url_for('reports') }}" class="btn btn-secondary" id="heroExploreBtn">
+                        <i class="fa-solid fa-map-location-dot"></i> Explore Local Issues
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div style="background-color: #0F172A; border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+                        <span style="font-weight: 700; font-size: 0.9rem; color: #5EEAD4;">
+                            <i class="fa-solid fa-bolt"></i> Live Civic Monitoring Feed
+                        </span>
+                        <span style="font-size: 0.75rem; background: rgba(13,148,136,0.3); color: #2DD4BF; padding: 2px 8px; border-radius: 99px;">Real-Time DB</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; gap: 0.75rem; align-items: center; background: rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 8px;">
+                            <i class="fa-solid fa-road" style="color: #EA580C; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: #FFFFFF;">Pothole on Access Road</div>
+                                <div style="font-size: 0.75rem; color: #94A3B8;">Kovvur Village, West Godavari • High Severity</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.75rem; align-items: center; background: rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 8px;">
+                            <i class="fa-solid fa-faucet-drip" style="color: #DC2626; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: #FFFFFF;">Main Pipeline Leakage</div>
+                                <div style="font-size: 0.75rem; color: #94A3B8;">Pipariya, Hoshangabad • Critical Severity</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.75rem; align-items: center; background: rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 8px;">
+                            <i class="fa-solid fa-trash-can" style="color: #D97706; font-size: 1.2rem;"></i>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: #FFFFFF;">Uncollected Waste Dump</div>
+                                <div style="font-size: 0.75rem; color: #94A3B8;">Rampur Village, Meerut • Medium Severity</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE STATS SECTION (Calculated from SQLite DB) -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <div>
+                <div class="stat-val">{{ total_count }}</div>
+                <div class="stat-label">Total Reports Stored</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon open">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div>
+                <div class="stat-val">{{ open_count }}</div>
+                <div class="stat-label">Active Open Issues</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon critical">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <div class="stat-val">{{ high_critical_count }}</div>
+                <div class="stat-label">High / Critical Severity</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon resolved">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <div class="stat-val">{{ resolved_count }}</div>
+                <div class="stat-label">Resolved Issues</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4 FEATURE CARDS SECTION -->
+    <section style="margin-bottom: 4rem;">
+        <div class="section-header">
+            <span class="section-tag">Core Capabilities</span>
+            <h2 class="section-title">Designed for Rural Villages & Urban Cities</h2>
+            <p class="section-desc">CivicPulse bridges the gap between grassroots citizens and local authority departments with intelligent reporting tools.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <h3 class="feature-title">AI-Assisted Detection</h3>
+                <p class="feature-desc">
+                    Upload a photograph and receive automated category suggestions (Pothole, Waste, Water Leakage) with confidence scores in demonstration mode.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-box" style="background-color: var(--orange-light); color: var(--orange-high);">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <h3 class="feature-title">Severity Assessment</h3>
+                <p class="feature-desc">
+                    Transparent rule-based priority engine evaluates physical safety risk, damage extent, and location type to assign Low, Medium, High, or Critical levels.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-box" style="background-color: var(--blue-light); color: var(--blue-info);">
+                    <i class="fa-solid fa-map-pin"></i>
+                </div>
+                <h3 class="feature-title">Location-Based Reporting</h3>
+                <p class="feature-desc">
+                    Supports explicit manual entry (State, District, Mandal, Village) and interactive Leaflet map pins so no rural corner is left unmapped.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-box" style="background-color: var(--green-light); color: var(--green-sdg);">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <h3 class="feature-title">Authority Information</h3>
+                <p class="feature-desc">
+                    Connect reported issues directly to local Gram Panchayat, R&B Road Departments, Municipality, and DISCOM Electricity official directory offices.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SDG 11 SUSTAINABILITY SECTION -->
+    <section class="sdg-card">
+        <div class="sdg-content">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: #A7F3D0; text-transform: uppercase; margin-bottom: 0.5rem;">
+                <i class="fa-solid fa-leaf"></i> Sustainable Development Goal 11
+            </div>
+            <h3>Make cities and human settlements inclusive, safe, resilient, and sustainable.</h3>
+            <p>
+                In many tier-2/3 towns and rural villages, infrastructure breakdown such as deep potholes, contaminated water leakage, and darkness at intersections remains unreported until severe accidents occur. CivicPulse empowers communities to make these invisible problems visible and actionable.
+            </p>
+        </div>
+        <div>
+            <a href="{{ url_for('about') }}" class="btn" style="background-color: #FFFFFF; color: #065F46; font-weight: 700;">
+                Learn About SDG 11 <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- RECENT REPORTS PREVIEW -->
+    <section style="margin-bottom: 3rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="font-size: 1.6rem; color: var(--navy-dark);">Recent Reported Issues</h2>
+                <p style="font-size: 0.9rem; color: var(--gray-muted);">Live updates from the SQLite community database</p>
+            </div>
+            <a href="{{ url_for('reports') }}" class="btn btn-outline" style="font-size: 0.9rem;">
+                View All Reports <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="reports-grid">
+            {% for report in recent_reports %}
+                <div class="report-card">
+                    <div class="report-img-wrapper">
+                        <img src="{{ url_for('static', filename='uploads/' + report.image_path) }}" alt="{{ report.category }}" class="report-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'><rect width=\'400\' height=\'200\' fill=\'%230F172A\'/><text x=\'50%\' y=\'50%\' fill=\'%2394A3B8\' font-family=\'sans-serif\' font-size=\'16\' text-anchor=\'middle\' dominant-baseline=\'middle\'>CivicPulse Report Image</text></svg>';">
+                        <div class="badge-overlay">
+                            <span class="badge badge-severity-{{ report.severity_level | lower }}">
+                                {{ report.severity_level }}
+                            </span>
+                            <span class="badge badge-status-{{ report.status | lower | replace(' ', '-') }}">
+                                {{ report.status }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="report-card-body">
+                        <div class="report-id">{{ report.id }}</div>
+                        <h3 class="report-category">{{ report.category }}</h3>
+                        <div class="report-location">
+                            <i class="fa-solid fa-location-dot" style="color: var(--teal-primary);"></i>
+                            {{ report.village_city }}, {{ report.district }}
+                        </div>
+                        <p class="report-desc-preview">{{ report.description }}</p>
+                        <div class="report-card-footer">
+                            <span><i class="fa-regular fa-calendar"></i> {{ report.observation_date }}</span>
+                            <a href="{{ url_for('report_details', report_id=report.id) }}" style="font-weight: 600; color: var(--teal-primary);">
+                                Details <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--gray-muted);">No reports logged yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

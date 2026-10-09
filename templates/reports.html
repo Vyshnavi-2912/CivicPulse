@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Local Issues - CivicPulse Map & Directory{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- PAGE TITLE -->
+    <div style="margin-bottom: 2rem;">
+        <span class="section-tag">Civic Explorer</span>
+        <h1 style="font-size: 2.2rem; color: var(--navy-dark);">Explore Local Problems</h1>
+        <p style="color: var(--gray-muted);">Discover, filter, and track community reports across villages and cities.</p>
+    </div>
+
+    <!-- LEAFLET MAP CONTAINER -->
+    <div style="margin-bottom: 2.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h3 style="font-size: 1.1rem; color: var(--navy-dark);">
+                <i class="fa-solid fa-map-location-dot" style="color: var(--teal-primary);"></i> Interactive Geographic Map
+            </h3>
+            <span style="font-size: 0.8rem; color: var(--gray-muted);">Click markers to view issue popups</span>
+        </div>
+        <div id="mapContainer" class="map-container"></div>
+    </div>
+
+    <!-- SEARCH & FILTER BAR -->
+    <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+        <form action="{{ url_for('reports') }}" method="GET" style="display: flex; flex-direction: column; gap: 1rem;">
+            
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <input type="text" name="search" class="form-control" placeholder="Search by Report ID, Village, District, or keyword..." value="{{ search_query }}">
+                </div>
+                <button type="submit" class="btn btn-primary" id="searchSubmitBtn">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                </button>
+                <a href="{{ url_for('reports') }}" class="btn btn-outline">Reset</a>
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Category</label>
+                    <select name="category" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">District / Location</label>
+                    <select name="district" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Districts</option>
+                        {% for dist in districts %}
+                            <option value="{{ dist }}" {% if selected_district == dist %}selected{% endif %}>{{ dist }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Severity Level</label>
+                    <select name="severity" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Severities</option>
+                        <option value="Critical" {% if selected_severity == 'Critical' %}selected{% endif %}>Critical</option>
+                        <option value="High" {% if selected_severity == 'High' %}selected{% endif %}>High</option>
+                        <option value="Medium" {% if selected_severity == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="Low" {% if selected_severity == 'Low' %}selected{% endif %}>Low</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Status</label>
+                    <select name="status" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="Reported" {% if selected_status == 'Reported' %}selected{% endif %}>Reported</option>
+                        <option value="Under Review" {% if selected_status == 'Under Review' %}selected{% endif %}>Under Review</option>
+                        <option value="In Progress" {% if selected_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Resolved" {% if selected_status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Data Source</label>
+                    <select name="source" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Reports (Real + Sample)</option>
+                        <option value="real" {% if selected_source == 'real' %}selected{% endif %}>Real User Submissions Only</option>
+                        <option value="sample" {% if selected_source == 'sample' %}selected{% endif %}>Hackathon Sample Demo Data</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- REPORTS GRID -->
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-weight: 600; color: var(--navy-dark);">
+            Showing {{ reports | length }} reports from database
+        </div>
+    </div>
+
+    <div class="reports-grid">
+        {% for report in reports %}
+            <div class="report-card">
+                <div class="report-img-wrapper">
+                    <img src="{{ url_for('static', filename='uploads/' + report.image_path) }}" alt="{{ report.category }}" class="report-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'><rect width=\'400\' height=\'200\' fill=\'%230F172A\'/><text x=\'50%\' y=\'50%\' fill=\'%2394A3B8\' font-family=\'sans-serif\' font-size=\'16\' text-anchor=\'middle\' dominant-baseline=\'middle\'>CivicPulse Report Image</text></svg>';">
+                    
+                    <div class="badge-overlay">
+                        <span class="badge badge-severity-{{ report.severity_level | lower }}">
+                            {{ report.severity_level }}
+                        </span>
+                        <span class="badge badge-status-{{ report.status | lower | replace(' ', '-') }}">
+                            {{ report.status }}
+                        </span>
+                    </div>
+
+                    {% if report.is_sample %}
+                        <span class="badge badge-sample" style="position: absolute; bottom: 8px; right: 8px; font-size: 0.65rem;">
+                            Demo Sample
+                        </span>
+                    {% else %}
+                        <span class="badge badge-real" style="position: absolute; bottom: 8px; right: 8px; font-size: 0.65rem;">
+                            Real Submission
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="report-card-body">
+                    <div class="report-id">{{ report.id }}</div>
+                    <h3 class="report-category">{{ report.category }}</h3>
+                    
+                    <div class="report-location">
+                        <i class="fa-solid fa-location-dot" style="color: var(--teal-primary);"></i>
+                        {{ report.village_city }}, {{ report.district }} ({{ report.state }})
+                    </div>
+
+                    <p class="report-desc-preview">{{ report.description }}</p>
+
+                    <div class="report-card-footer">
+                        <span><i class="fa-regular fa-calendar"></i> {{ report.observation_date }}</span>
+                        
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <button type="button" class="btn-upvote" data-report-id="{{ report.id }}" style="background: none; border: none; cursor: pointer; color: var(--gray-muted); font-size: 0.85rem;" title="Upvote this report">
+                                <i class="fa-regular fa-thumbs-up"></i> <span class="upvote-count">{{ report.upvotes }}</span>
+                            </button>
+
+                            <a href="{{ url_for('report_details', report_id=report.id) }}" style="font-weight: 600; color: var(--teal-primary);">
+                                Details <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1.5rem; background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--gray-border);">
+                <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: var(--gray-light); margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--navy-dark); margin-bottom: 0.5rem;">No matching reports found</h3>
+                <p style="color: var(--gray-muted); margin-bottom: 1.5rem;">Try adjusting your filters or search query.</p>
+                <a href="{{ url_for('reports') }}" class="btn btn-outline">Clear All Filters</a>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

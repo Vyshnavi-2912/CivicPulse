@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Verified Local Authority Directory & Emergency Helplines - CivicPulse{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- PAGE TITLE -->
+    <div style="margin-bottom: 2rem;">
+        <span class="section-tag"><i class="fa-solid fa-building-columns"></i> Official Governance Directory</span>
+        <h1 style="font-size: 2.2rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Local Authority Contacts & Helplines</h1>
+        <p style="color: var(--gray-muted); font-size: 1.05rem;">
+            Verified phone numbers, physical office addresses, designated officers, and 24x7 grievance helplines across districts and municipalities.
+        </p>
+    </div>
+
+    <!-- 24x7 CITIZEN GRIEVANCE EMERGENCY HELPLINES RIBBON -->
+    <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: var(--radius-lg); padding: 1.5rem; color: #FFFFFF; margin-bottom: 2.5rem; box-shadow: var(--shadow-md); border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="font-weight: 700; font-size: 1rem; color: #5EEAD4; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-headset" style="font-size: 1.2rem;"></i> 24x7 National & State Citizen Emergency Grievance Desks
+            </div>
+            <span style="font-size: 0.75rem; background: rgba(13,148,136,0.3); color: #2DD4BF; padding: 3px 10px; border-radius: 99px; font-weight: 600;">
+                Toll-Free Government Services
+            </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="background: rgba(255,255,255,0.06); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Electricity / Power Breakdowns</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #FBBF24; margin: 2px 0;">Dial 1912</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">All-India DISCOM Grievance Cell</div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.06); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">National Emergency / Hazards</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #F87171; margin: 2px 0;">Dial 112</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">Emergency Response Support System</div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.06); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Swachh Bharat / Sanitation</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #34D399; margin: 2px 0;">Dial 1969</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">Urban Sanitation & Waste Clearance</div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.06); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.75rem; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Road Infrastructure Hazards</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #60A5FA; margin: 2px 0;">Dial 1033</div>
+                <div style="font-size: 0.75rem; color: #CBD5E1;">National & State Highway Helpline</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER & SEARCH BAR -->
+    <div style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+        <form action="{{ url_for('authority') }}" method="GET" style="display: flex; flex-direction: column; gap: 1rem;">
+            
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 260px;">
+                    <input type="text" name="search" class="form-control" placeholder="Search by District (e.g. Eluru, West Godavari), Office Name, Officer, or Address..." value="{{ search_query }}">
+                </div>
+                <button type="submit" class="btn btn-primary" id="searchAuthorityBtn">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search Directory
+                </button>
+                <a href="{{ url_for('authority') }}" class="btn btn-outline">Reset</a>
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));">
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Filter by State</label>
+                    <select name="state" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All States</option>
+                        {% for st in states %}
+                            <option value="{{ st }}" {% if selected_state == st %}selected{% endif %}>{{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Filter by District</label>
+                    <input type="text" name="district" class="form-control" style="font-size: 0.85rem;" placeholder="e.g. Eluru, Kovvur..." value="{{ selected_district }}">
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Filter by Department</label>
+                    <select name="department" class="form-select" style="font-size: 0.85rem;" onchange="this.form.submit()">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept }}" {% if selected_department == dept %}selected{% endif %}>{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- DIRECTORY STATS BAR -->
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="font-weight: 700; color: var(--navy-dark); font-size: 1.05rem;">
+            Showing {{ contacts | length }} verified public authority offices
+        </div>
+        <div style="font-size: 0.85rem; color: var(--gray-muted);">
+            <i class="fa-solid fa-shield-check" style="color: var(--teal-primary);"></i> Verified through State e-Governance portals & Municipal Directories
+        </div>
+    </div>
+
+    <!-- CONTACT CARDS GRID -->
+    <div class="reports-grid" style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem;">
+        {% for c in contacts %}
+            <div class="authority-card" style="border: 1px solid var(--gray-border); background-color: var(--bg-card); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s;">
+                
+                <div>
+                    <!-- TOP BADGES -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+                        <span class="authority-verified-tag" style="font-size: 0.75rem; padding: 3px 8px; border-radius: var(--radius-full); background: #DCFCE7; color: #166534; font-weight: 700;">
+                            <i class="fa-solid fa-circle-check"></i> Verified Govt Record
+                        </span>
+
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--teal-primary); background: var(--teal-light); padding: 3px 8px; border-radius: 99px;">
+                            {{ c.department }}
+                        </span>
+                    </div>
+
+                    <!-- OFFICE NAME -->
+                    <h3 style="font-size: 1.2rem; color: var(--navy-dark); margin-bottom: 0.35rem; line-height: 1.3;">
+                        {{ c.office_name }}
+                    </h3>
+
+                    <!-- JURISDICTION LOCATION -->
+                    <div style="font-size: 0.85rem; color: var(--teal-hover); font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 5px;">
+                        <i class="fa-solid fa-location-dot"></i>
+                        {{ c.mandal_municipality or c.district }}, {{ c.district }} ({{ c.state }})
+                    </div>
+
+                    <!-- CONTACT DETAILS SECTION -->
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.9rem; padding: 0.9rem; background-color: var(--bg-main); border-radius: var(--radius-md); border: 1px solid var(--gray-border); margin-bottom: 1rem;">
+                        {% if c.contact_person %}
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="fa-solid fa-user-tie" style="color: var(--teal-primary); margin-top: 3px; width: 16px;"></i>
+                                <div>
+                                    <span style="font-size: 0.75rem; color: var(--gray-muted); display: block; font-weight: 600;">DESIGNATED OFFICER</span>
+                                    <strong style="color: var(--navy-dark);">{{ c.contact_person }}</strong>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if c.phone %}
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="fa-solid fa-phone" style="color: var(--teal-primary); margin-top: 3px; width: 16px;"></i>
+                                <div>
+                                    <span style="font-size: 0.75rem; color: var(--gray-muted); display: block; font-weight: 600;">OFFICE TELEPHONE / HELPLINE</span>
+                                    <a href="tel:{{ c.phone }}" style="font-weight: 700; color: var(--teal-primary); font-size: 0.95rem;">{{ c.phone }}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if c.email %}
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="fa-solid fa-envelope" style="color: var(--teal-primary); margin-top: 3px; width: 16px;"></i>
+                                <div style="word-break: break-all;">
+                                    <span style="font-size: 0.75rem; color: var(--gray-muted); display: block; font-weight: 600;">OFFICIAL E-MAIL</span>
+                                    <a href="mailto:{{ c.email }}" style="color: var(--navy-mid); font-weight: 500;">{{ c.email }}</a>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if c.address %}
+                            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                                <i class="fa-solid fa-building" style="color: var(--teal-primary); margin-top: 3px; width: 16px;"></i>
+                                <div>
+                                    <span style="font-size: 0.75rem; color: var(--gray-muted); display: block; font-weight: 600;">PHYSICAL POSTAL ADDRESS</span>
+                                    <span style="font-size: 0.85rem; color: var(--navy-mid); line-height: 1.4;">{{ c.address }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS: CALL NOW & EMAIL & MAP -->
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; pt: 0.5rem;">
+                    {% if c.phone %}
+                        <a href="tel:{{ c.phone }}" class="btn btn-primary" style="flex: 1; min-width: 130px; font-size: 0.85rem; padding: 0.5rem 0.75rem;">
+                            <i class="fa-solid fa-phone"></i> Call Office
+                        </a>
+                    {% endif %}
+
+                    {% if c.email %}
+                        <a href="mailto:{{ c.email }}" class="btn btn-outline" style="flex: 1; min-width: 130px; font-size: 0.85rem; padding: 0.5rem 0.75rem;">
+                            <i class="fa-solid fa-envelope"></i> Send Email
+                        </a>
+                    {% endif %}
+
+                    {% if c.address %}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ c.office_name }}+{{ c.address }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 0.75rem; background: #0F172A; color: white;" title="View Location Directions on Google Maps">
+                            <i class="fa-solid fa-map-location-dot"></i> Map
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1.5rem; background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--gray-border);">
+                <i class="fa-solid fa-building-circle-exclamation" style="font-size: 3rem; color: var(--gray-light); margin-bottom: 1rem;"></i>
+                <h3 style="color: var(--navy-dark); margin-bottom: 0.5rem;">No matching authority contacts found</h3>
+                <p style="color: var(--gray-muted); max-width: 500px; margin: 0 auto 1.5rem;">
+                    Try searching for another district or keyword, or reset your filters to browse the entire directory.
+                </p>
+                <a href="{{ url_for('authority') }}" class="btn btn-outline">Clear All Filters</a>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CivicPulse - Invisible Problem Detector (SDG 11){% endblock %}</title>
+    <meta name="description" content="Identify overlooked problems in villages and cities, organize reports, assess severity, and connect with local authority information. Aligned with SDG 11.">
+    
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- CivicPulse Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="brand-logo" id="brandLogoLink">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </div>
+                <div>
+                    CivicPulse
+                    <span class="brand-tag-badge">SDG 11</span>
+                </div>
+            </a>
+
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('reports') }}" class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}">Explore Issues</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{{ url_for('authority') }}" class="nav-link {% if request.endpoint == 'authority' %}active{% endif %}">Authorities</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">SDG 11 & About</a></li>
+                <li><a href="{{ url_for('admin') }}" class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}"><i class="fa-solid fa-shield-halved"></i> Admin Demo</a></li>
+                <li>
+                    <a href="{{ url_for('report') }}" class="btn-nav-action" id="navReportBtn">
+                        <i class="fa-solid fa-plus-circle"></i> Report a Problem
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- FLASH NOTIFICATIONS CONTAINER -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <div>
+                            {% if category == 'success' %}
+                                <i class="fa-solid fa-circle-check"></i>
+                            {% elif category == 'danger' %}
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle-info"></i>
+                            {% endif %}
+                            <span style="margin-left: 8px;">{{ message }}</span>
+                        </div>
+                        <button type="button" style="background:none; border:none; color:inherit; cursor:pointer;" onclick="this.parentElement.remove()">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- MAIN BODY CONTENT -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">
+                    <i class="fa-solid fa-eye-slash" style="color: var(--teal-primary);"></i> CivicPulse
+                </div>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem;">
+                    Making Invisible Problems Visible. Empowering citizens in villages and cities to highlight overlooked civic issues and build safer, cleaner communities.
+                </p>
+                <div style="display: flex; gap: 0.75rem; font-size: 1.1rem; color: #64748B;">
+                    <i class="fa-solid fa-leaf" title="SDG 11 Sustainable Cities"></i>
+                    <i class="fa-solid fa-city" title="Urban & Rural Infrastructure"></i>
+                    <i class="fa-solid fa-shield-cat" title="Safety Risk Assessment"></i>
+                </div>
+            </div>
+
+            <div>
+                <h4 style="color: #FFFFFF; font-size: 1rem; margin-bottom: 1rem;">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('report') }}">Report a Problem</a></li>
+                    <li><a href="{{ url_for('reports') }}">Explore Local Issues</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Civic Dashboard</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: #FFFFFF; font-size: 1rem; margin-bottom: 1rem;">SDG 11 Alignment</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('about') }}">Target 11.3: Inclusive Cities</a></li>
+                    <li><a href="{{ url_for('about') }}">Target 11.6: Waste & Environment</a></li>
+                    <li><a href="{{ url_for('about') }}">Target 11.7: Safe Public Spaces</a></li>
+                    <li><a href="{{ url_for('authority') }}">Local Authority Contacts</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: #FFFFFF; font-size: 1rem; margin-bottom: 1rem;">Hackathon Demo</h4>
+                <p style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 0.75rem;">
+                    Developed for College Hackathon Demonstration. Features working SQLite database, Leaflet map, AI Demonstration mode, and rule-based severity calculator.
+                </p>
+                <a href="{{ url_for('admin') }}" style="font-size: 0.85rem; color: #5EEAD4;"><i class="fa-solid fa-lock"></i> Jury Admin Console Login</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; 2026 CivicPulse – Sustainable Cities & Communities (UN SDG 11). All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- CivicPulse JS Modules -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

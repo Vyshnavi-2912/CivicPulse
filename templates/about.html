@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}SDG 11 & About CivicPulse{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- PAGE HEADER -->
+    <div style="margin-bottom: 2.5rem; text-align: center; max-width: 760px; margin-left: auto; margin-right: auto;">
+        <div class="sdg-badge">
+            <i class="fa-solid fa-leaf"></i> Sustainable Cities & Communities
+        </div>
+        <h1 style="font-size: 2.4rem; color: var(--navy-dark); margin-bottom: 0.75rem;">About CivicPulse</h1>
+        <p style="font-size: 1.1rem; color: var(--gray-muted);">
+            Building resilient civic technology to identify overlooked hazards in rural villages and urban cities.
+        </p>
+    </div>
+
+    <!-- SDG 11 DEEP DIVE SECTION -->
+    <section style="background-color: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--gray-border); padding: 2.5rem; box-shadow: var(--shadow-sm); margin-bottom: 3rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="width: 54px; height: 54px; background-color: var(--green-light); color: var(--green-sdg); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+                <i class="fa-solid fa-city"></i>
+            </div>
+            <div>
+                <h2 style="font-size: 1.6rem; color: var(--navy-dark);">UN SDG Goal 11 Alignment</h2>
+                <div style="font-size: 0.9rem; color: var(--gray-muted);">Make cities and human settlements inclusive, safe, resilient, and sustainable.</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <div style="background-color: var(--bg-main); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--teal-primary);">
+                <h4 style="font-size: 1.05rem; color: var(--navy-dark); margin-bottom: 0.4rem;">Target 11.3: Inclusive Urbanization</h4>
+                <p style="font-size: 0.88rem; color: var(--gray-muted);">
+                    Empowers citizens in small rural villages and non-metro towns to report infrastructure defects without needing complex bureaucratic channels.
+                </p>
+            </div>
+
+            <div style="background-color: var(--bg-main); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--green-sdg);">
+                <h4 style="font-size: 1.05rem; color: var(--navy-dark); margin-bottom: 0.4rem;">Target 11.6: Environmental Impact</h4>
+                <p style="font-size: 0.88rem; color: var(--gray-muted);">
+                    Accelerates the detection of uncollected municipal waste dumps and drinking water pipeline bursts to prevent contamination and resource loss.
+                </p>
+            </div>
+
+            <div style="background-color: var(--bg-main); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--orange-high);">
+                <h4 style="font-size: 1.05rem; color: var(--navy-dark); margin-bottom: 0.4rem;">Target 11.7: Safe Public Spaces</h4>
+                <p style="font-size: 0.88rem; color: var(--gray-muted);">
+                    Identifies dark streetlight junctions, dangerous potholes, and fallen trees to keep public thoroughfares safe for women, children, and commuters.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE & MODULAR DESIGN -->
+    <section style="margin-bottom: 3rem;">
+        <h2 style="font-size: 1.8rem; color: var(--navy-dark); margin-bottom: 1.5rem;">System Architecture & Design</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem;">
+            
+            <div style="background-color: var(--bg-card); padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-border); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.2rem; color: var(--navy-dark); margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-code" style="color: var(--teal-primary);"></i> Full-Stack Technology
+                </h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--navy-mid);">
+                    <li><strong>Backend:</strong> Python 3 Flask web application framework</li>
+                    <li><strong>Database:</strong> Relational SQLite3 database (`civicpulse.db`)</li>
+                    <li><strong>Frontend:</strong> HTML5, Vanilla CSS3 design system, JavaScript ES6</li>
+                    <li><strong>Mapping:</strong> Leaflet.js with OpenStreetMap vector tiles</li>
+                    <li><strong>Analytics:</strong> Chart.js canvas graphing library</li>
+                </ul>
+            </div>
+
+            <div style="background-color: var(--bg-card); padding: 1.75rem; border-radius: var(--radius-lg); border: 1px solid var(--gray-border); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.2rem; color: var(--navy-dark); margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-robot" style="color: var(--orange-high);"></i> AI & Severity Engine
+                </h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--navy-mid);">
+                    <li><strong>AI Vision Module:</strong> Modular classifier wrapper with live Demonstration Mode</li>
+                    <li><strong>Rule-Based Severity:</strong> Multi-factor calculation engine assessing safety risk, damage extent, and location priority</li>
+                    <li><strong>Authority Directory:</strong> Mapped local office database (Gram Panchayat, R&B, Water Board, DISCOM)</li>
+                    <li><strong>Admin Portal:</strong> Protected jury demonstration interface for status tracking</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+{% endblock %}

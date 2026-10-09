@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Demo Login - CivicPulse{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <div style="max-width: 440px; margin: 3rem auto;">
+        <div class="form-card">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="width: 56px; height: 56px; background: var(--navy-dark); color: #5EEAD4; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 0.75rem;">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 style="font-size: 1.5rem; color: var(--navy-dark);">Administrator Console</h2>
+                <p style="font-size: 0.85rem; color: var(--gray-muted);">Hackathon Jury Demonstration Mode</p>
+            </div>
+
+            <form action="{{ url_for('admin') }}" method="POST">
+                <input type="hidden" name="action" value="login">
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" name="username" id="username" class="form-control" value="admin" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control" value="civicpulse2026" required>
+                </div>
+
+                <div style="background-color: var(--bg-alt); padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--navy-subtle);">
+                    <i class="fa-solid fa-key" style="color: var(--teal-primary);"></i> <strong>Demo Credentials:</strong><br>
+                    Username: <code>admin</code><br>
+                    Password: <code>civicpulse2026</code>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="adminLoginSubmitBtn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login to Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
