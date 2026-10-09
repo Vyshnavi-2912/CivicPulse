@@ -17,7 +17,10 @@ app.secret_key = 'civicpulse_hackathon_sdg11_secret_key_2026'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB limit
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+except Exception:
+    pass
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
