@@ -244,6 +244,8 @@ def get_department_for_category(category):
 # ==============================================================================
 
 @app.route('/')
+@app.route('/index')
+@app.route('/index.html')
 def index():
     conn = get_db_connection()
     
